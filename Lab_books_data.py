@@ -15,15 +15,19 @@ def get_book_data(book):
     html = get_html(book['book'])
     soup = BeautifulSoup(html, 'html.parser')
     data = soup.find('div', class_='product-description')
-    title = soup.find('div', class_='prodtitle').find('h1').text
-    author = data.find('div', class_='authors').find('a').text
-    other_creators = None
+    try:
+        title = soup.find('div', class_='prodtitle').find('h1').text
+    except(AttributeError):
+        title = None
+    author = data.find('div', class_='authors').find('a').text if data.find('div', class_='authors') and data.find(
+        'div', class_='authors').find('a') else None
+    other_creators = data.find('div', class_='auth')
     country = None
     original_language = None
     edition_language = None
     year_of_creating = None
     year_of_edition = data.find('div', class_='publisher').text[-7:-3]
-    ISBN = data.find('div', class_='isbn').text[6:]
+    ISBN = data.find('div', class_='isbn').text[6:] if data.find('div', class_='isbn') else None
     publishing = data.find('div', class_='publisher').find('a').text
     pages_count = data.find('div', class_='pages2').text[9:13]
     cover = soup.find('div', id='product-image').find('img')['src']
@@ -32,7 +36,7 @@ def get_book_data(book):
     last_update = book['lastmod']
     shop_url = book['book']
     price = soup.find('span', class_='buying-priceold-val-number').text
-    sale_price=soup.find('span', class_='buying-pricenew-val-number').text
+    sale_price = soup.find('span', class_='buying-pricenew-val-number').text
 
     book_data = {
         'title': title,
@@ -51,9 +55,9 @@ def get_book_data(book):
         'annotation': annotation,
         'last_update': last_update,
         'shop_url': shop_url,
-        'price':price,
-        'sale_price':sale_price
-        }
+        'price': price,
+        'sale_price': sale_price
+    }
     print(book_data)
 
 
